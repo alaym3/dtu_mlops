@@ -23,8 +23,8 @@ class Dataset():
 
 def mnist():
     # set file paths
-    train_files = glob.glob(r'/Users/alaina/Desktop/classes/2023Jan/dtu_mlops/data/corruptmnist/train*.npz')
-    test_files = glob.glob(r'/Users/alaina/Desktop/classes/2023Jan/dtu_mlops/data/corruptmnist/test*.npz')
+    train_files = glob.glob(r'/Users/alaina/Desktop/classes/2023Jan/dtu_mlops/data/corruptmnist*/train*.npz')
+    test_files = glob.glob(r'/Users/alaina/Desktop/classes/2023Jan/dtu_mlops/data/corruptmnist*/test*.npz')
 
     # initialize X and y arrays for training
     train_images = []
