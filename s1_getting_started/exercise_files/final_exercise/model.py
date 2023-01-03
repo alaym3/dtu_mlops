@@ -1,22 +1,44 @@
 from torch import nn
-import torch.nn.functional as F
+from torch.nn.modules.conv import Conv2d
+
+from torch import unsqueeze
+
 
 class MyAwesomeModel(nn.Module):
     def __init__(self):
         super().__init__()
-        # Inputs to hidden layer linear transformation
-        self.fc1 = nn.Linear(784, 128)
-        # Inputs to 2nd hidden layer linear transformation
-        self.fc2 = nn.Linear(128, 64)
-        # Output layer, 10 units - one for each digit
-        self.output = nn.Linear(64, 10)
+        # build convolutional layers
+        self.conv = nn.Sequential(nn.Conv2d(1, 4, kernel_size=3, padding=1, stride =1),
+                                nn.Dropout(p=0.2),
+                                nn.ReLU(),
+                                nn.MaxPool2d(2,2),
+                                nn.Conv2d(4,8,3,1,1),
+                                nn.Dropout(p=0.2),
+                                nn.ReLU(),
+                                nn.Conv2d(8,8,3,1,1),                                 
+                                nn.ReLU(),
+                                nn.Dropout(p=0.2),
+                                nn.ReLU(),
+                                nn.MaxPool2d(2,2), 
+                                nn.Conv2d(8,16,3,1,1),
+                                nn.Dropout(p=0.2),
+                                nn.ReLU())
         
+        # build fully connected layers
+        self.fc = nn.Sequential(nn.Linear(7*7*16, 256),
+                                nn.Dropout(p=0.2),
+                                nn.ReLU(),
+                                nn.Linear(256, 128),
+                                nn.Dropout(p=0.2),
+                                nn.ReLU(),
+                                nn.Linear(128,10),
+                                nn.LogSoftmax(dim=1))
+        
+    # forward pass    
     def forward(self, x):
-        # Hidden layer 1 with relu activation
-        x = F.relu(self.fc1(x))
-        # Hidden layer 2 with relu activation
-        x = F.relu(self.fc2(x))
-        # Output layer with softmax activation
-        x = F.log_softmax(self.output(x), dim=1)
-        
-        return x
+        x = unsqueeze(x,dim=1)
+        x = self.conv(x)
+        x = x.view(x.size(0), -1)
+        out = self.fc(x)
+        return out  
+    
