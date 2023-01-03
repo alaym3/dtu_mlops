@@ -1,11 +1,11 @@
-import torch
 import click
-import tqdm
 import matplotlib.pyplot as plt
+import torch
+import tqdm
+from model import MyAwesomeModel
 
 # import from the other scripts
 from data import mnist
-from model import MyAwesomeModel
 
 
 @click.group()

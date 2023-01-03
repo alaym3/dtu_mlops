@@ -1,7 +1,5 @@
-from torch import nn
+from torch import nn, unsqueeze
 from torch.nn.modules.conv import Conv2d
-
-from torch import unsqueeze
 
 
 class MyAwesomeModel(nn.Module):
@@ -28,10 +26,10 @@ class MyAwesomeModel(nn.Module):
         self.fc = nn.Sequential(nn.Linear(7*7*16, 256),
                                 nn.Dropout(p=0.2),
                                 nn.ReLU(),
-                                nn.Linear(256, 128),
+                                nn.Linear(256, 64),
                                 nn.Dropout(p=0.2),
                                 nn.ReLU(),
-                                nn.Linear(128,10),
+                                nn.Linear(64,10),
                                 nn.LogSoftmax(dim=1))
         
     # forward pass    

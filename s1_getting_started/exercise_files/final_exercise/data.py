@@ -1,6 +1,7 @@
-import torch
-import numpy as np
 import glob
+
+import numpy as np
+import torch
 
 
 class Dataset():

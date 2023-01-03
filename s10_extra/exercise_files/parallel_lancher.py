@@ -2,6 +2,7 @@ import argparse
 import os
 from multiprocessing import Pool
 
+
 def script_launcher(script):
     os.system(f"python {script}")
 
