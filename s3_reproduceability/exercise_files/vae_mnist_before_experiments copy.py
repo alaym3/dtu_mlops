@@ -22,30 +22,27 @@ log = logging.getLogger(__name__)
 
 
 # hyperparameters with hydra
-@hydra.main(config_path = "config",config_name="default_config.yaml")
+@hydra.main(config_name="config.yaml")
 
 def main(cfg):
+    # initial settings
+    torch.manual_seed(cfg.seed)
+    DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
     # set hyperparameters from selected experiment
     # hyperparameters = config.experiment
-    hyperparameters = cfg.experiment
-    
-    # initial settings
-    torch.manual_seed(hyperparameters.seed)
-    DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-
 
 
     # Data loading
     mnist_transform = transforms.Compose([transforms.ToTensor()])
 
-    train_dataset = MNIST(hyperparameters.dataset_path, transform=mnist_transform, train=True, download=True)
-    test_dataset  = MNIST(hyperparameters.dataset_path, transform=mnist_transform, train=False, download=True)
+    train_dataset = MNIST(cfg.dataset_path, transform=mnist_transform, train=True, download=True)
+    test_dataset  = MNIST(cfg.dataset_path, transform=mnist_transform, train=False, download=True)
 
-    train_loader = DataLoader(dataset=train_dataset, batch_size=hyperparameters.batch_size, shuffle=True)
-    test_loader  = DataLoader(dataset=test_dataset,  batch_size=hyperparameters.batch_size, shuffle=False)
+    train_loader = DataLoader(dataset=train_dataset, batch_size=cfg.batch_size, shuffle=True)
+    test_loader  = DataLoader(dataset=test_dataset,  batch_size=cfg.batch_size, shuffle=False)
 
-    encoder = Encoder(input_dim=hyperparameters.x_dim, hidden_dim=hyperparameters.hidden_dim, latent_dim=hyperparameters.latent_dim)
-    decoder = Decoder(latent_dim=hyperparameters.latent_dim, hidden_dim = hyperparameters.hidden_dim, output_dim = hyperparameters.x_dim)
+    encoder = Encoder(input_dim=cfg.x_dim, hidden_dim=cfg.hidden_dim, latent_dim=cfg.latent_dim)
+    decoder = Decoder(latent_dim=cfg.latent_dim, hidden_dim = cfg.hidden_dim, output_dim = cfg.x_dim)
 
     model = Model(Encoder=encoder, Decoder=decoder).to(DEVICE)
 
@@ -58,15 +55,15 @@ def main(cfg):
 
         return reproduction_loss + KLD
 
-    optimizer = Adam(model.parameters(), lr=hyperparameters.lr)
+    optimizer = Adam(model.parameters(), lr=cfg.lr)
 
 
     log.info("Start training VAE...")
     model.train()
-    for epoch in range(hyperparameters.epochs):
+    for epoch in range(cfg.epochs):
         overall_loss = 0
         for batch_idx, (x, _) in enumerate(train_loader):
-            x = x.view(hyperparameters.batch_size, hyperparameters.x_dim)
+            x = x.view(cfg.batch_size, cfg.x_dim)
             x = x.to(DEVICE)
 
             optimizer.zero_grad()
@@ -78,7 +75,7 @@ def main(cfg):
             
             loss.backward()
             optimizer.step()
-        log.info("\tEpoch", epoch + 1, "complete!", "\tAverage Loss: ", overall_loss / (batch_idx*hyperparameters.batch_size))    
+        log.info("\tEpoch", epoch + 1, "complete!", "\tAverage Loss: ", overall_loss / (batch_idx*cfg.batch_size))    
     log.info("Finish!!")
 
     # save weights
@@ -88,20 +85,20 @@ def main(cfg):
     model.eval()
     with torch.no_grad():
         for batch_idx, (x, _) in enumerate(test_loader):
-            x = x.view(hyperparameters.batch_size, hyperparameters.x_dim)
+            x = x.view(cfg.batch_size, cfg.x_dim)
             x = x.to(DEVICE)      
             x_hat, _, _ = model(x)       
             break
 
-    save_image(x.view(hyperparameters.batch_size, 1, 28, 28), 'orig_data.png')
-    save_image(x_hat.view(hyperparameters.batch_size, 1, 28, 28), 'reconstructions.png')
+    save_image(x.view(cfg.batch_size, 1, 28, 28), 'orig_data.png')
+    save_image(x_hat.view(cfg.batch_size, 1, 28, 28), 'reconstructions.png')
 
     # Generate samples
     with torch.no_grad():
-        noise = torch.randn(hyperparameters.batch_size, hyperparameters.latent_dim).to(DEVICE)
+        noise = torch.randn(cfg.batch_size, cfg.latent_dim).to(DEVICE)
         generated_images = decoder(noise)
         
-    save_image(generated_images.view(hyperparameters.batch_size, 1, 28, 28), 'generated_sample.png')
+    save_image(generated_images.view(cfg.batch_size, 1, 28, 28), 'generated_sample.png')
 
 if __name__ == "__main__":
     main()
