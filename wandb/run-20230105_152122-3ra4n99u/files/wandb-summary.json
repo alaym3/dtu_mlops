@@ -1,0 +1,1 @@
+{"loss": 10894.71484375, "_timestamp": 1672928539.482964, "Average_loss": {"_type": "plotly-file", "sha256": "66d2accf08c912bac454a9f38bd13580525a2ce099d69ae92c3f08463ef6be63", "size": 8472, "path": "media/plotly/Average_loss_0_66d2accf08c912bac454.plotly.json"}, "_runtime": 57.38613200187683, "_step": 0, "_wandb": {"runtime": 56}}

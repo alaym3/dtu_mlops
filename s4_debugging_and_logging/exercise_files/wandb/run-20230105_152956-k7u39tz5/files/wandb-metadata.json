@@ -1,0 +1,41 @@
+{
+    "os": "macOS-10.16-x86_64-i386-64bit",
+    "python": "3.8.13",
+    "heartbeatAt": "2023-01-05T14:30:03.848541",
+    "startedAt": "2023-01-05T14:29:56.231463",
+    "docker": null,
+    "cuda": null,
+    "args": null,
+    "state": "running",
+    "program": "s4_debugging_and_logging/exercise_files/wandb_notebook_test-jvsc-b629949e-042b-4bb7-a609-78b92a3d06144186ecd1-e07e-47a5-a2a7-b877460e5b8f.ipynb",
+    "root": "/Users/alaina/Desktop/classes/2023Jan/dtu_mlops",
+    "git": {
+        "remote": "https://github.com/alaym3/dtu_mlops.git",
+        "commit": "576cc8f5073b9643aa020eadbe1ef3daffb7c299"
+    },
+    "email": "aam5xa@virginia.edu",
+    "host": "Alainas-MBP.webspeed.dk",
+    "username": "alaina",
+    "executable": "/../Users/alaina/opt/anaconda3/envs/venv1/bin/python",
+    "cpu_count": 8,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 2400,
+        "min": 2400,
+        "max": 2400
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2400,
+            "min": 2400,
+            "max": 2400
+        }
+    ],
+    "disk": {
+        "total": 460.4317207336426,
+        "used": 20.811771392822266
+    },
+    "memory": {
+        "total": 16.0
+    }
+}

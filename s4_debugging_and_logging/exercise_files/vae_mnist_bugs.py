@@ -13,7 +13,7 @@ from torchvision.utils import save_image
 
 # Model Hyperparameters
 dataset_path = 'datasets'
-cuda = True
+cuda = torch.cuda.is_available()
 DEVICE = torch.device("cuda" if cuda else "cpu")
 batch_size = 100
 x_dim  = 784
@@ -45,15 +45,16 @@ class Encoder(nn.Module):
         h_       = torch.relu(self.FC_input(x))
         mean     = self.FC_mean(h_)
         log_var  = self.FC_var(h_)                     
-                                                      
-        z        = self.reparameterization(mean, log_var)
+        
+        std = torch.exp(0.5*log_var)                                              
+        z        = self.reparameterization(mean, std)
         
         return z, mean, log_var
        
-    def reparameterization(self, mean, var):
-        epsilon = torch.randn(*var.shape)
+    def reparameterization(self, mean, std):
+        epsilon = torch.randn_like(std)
         
-        z = mean + var*epsilon
+        z = mean + std*epsilon
         
         return z
     
@@ -61,7 +62,7 @@ class Decoder(nn.Module):
     def __init__(self, latent_dim, hidden_dim, output_dim):
         super(Decoder, self).__init__()
         self.FC_hidden = nn.Linear(latent_dim, hidden_dim)
-        self.FC_output = nn.Linear(latent_dim, output_dim)
+        self.FC_output = nn.Linear(hidden_dim, output_dim)
         
     def forward(self, x):
         h     = torch.relu(self.FC_hidden(x))
@@ -106,6 +107,8 @@ for epoch in range(epochs):
     for batch_idx, (x, _) in enumerate(train_loader):
         x = x.view(batch_size, x_dim)
         x = x.to(DEVICE)
+        
+        optimizer.zero_grad()
 
         x_hat, mean, log_var = model(x)
         loss = loss_function(x, x_hat, mean, log_var)
