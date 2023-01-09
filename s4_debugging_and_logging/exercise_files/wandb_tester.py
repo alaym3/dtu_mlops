@@ -7,7 +7,7 @@ from torchvision.datasets import MNIST
 import matplotlib.pyplot as plt
 
 # initialize wandb
-wandb.init(project='wandb-test-loss')
+wandb.init(project='wandb-report')
 # evaluate the training loss
 """
 Adapted from
@@ -122,24 +122,24 @@ for epoch in range(epochs):
         
         overall_loss += loss.item()
         # log overall loss to wandb
-        wandb.log({"loss":loss}) 
+        # wandb.log({"loss":loss}) 
         
         loss.backward()
         optimizer.step()
     print("\tEpoch", epoch + 1, "complete!", "\tAverage Loss: ", overall_loss / (batch_idx*batch_size))    
     average_losses.append(overall_loss / (batch_idx*batch_size))
-print("Finish!!")
-x = [1,2,3,4,5]
-plt.plot(x,average_losses)
-plt.title('Average loss along epochs')
-plt.xlabel('epoch')
-plt.ylabel('Average loss')
-plt.locator_params(axis="both", integer=True, tight=True)
-plt.ylim(ymin=0)
-plt.show()
-wandb.log({"Average_loss": plt}, commit=False)
+# print("Finish!!")
+# x = [1,2,3,4,5]
+# plt.plot(x,average_losses)
+# plt.title('Average loss along epochs')
+# plt.xlabel('epoch')
+# plt.ylabel('Average loss')
+# # plt.locator_params(axis="both", integer=True, tight=True)
+# # # plt.ylim(ymin=0)
+# # plt.show()
+# wandb.log({"Average_loss": plt})
 
-# wandb.log({"Average_loss": plt}) #, commit=False)
+# # wandb.log({"Average_loss": plt}) #, commit=False)
 
 # Generate reconstructions
 model.eval()
